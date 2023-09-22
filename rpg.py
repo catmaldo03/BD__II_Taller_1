@@ -25,9 +25,11 @@ class Entidad:
             energia_recuperada=self.energia_maxima*0.15
             salud_recuperada=self.salud_maxima*0.15
             if self.salud_maxima < salud_recuperada+self.salud:
-                pass# indicar que el personaje no puede tener mas que su salud maxima
+                salud_recuperada=self.salud_maxima-self.salud
+                # indicar que el personaje no puede tener mas que su salud maxima
             if self.energia_maxima < energia_recuperada+self.energia:
-                pass# indicar que el personaje no puede tener mas que su energia
+                energia_recuperada=self.energia_maxima-self.energia
+                # indicar que el personaje no puede tener mas que su energia
             self.salud+=salud_recuperada
             self.energia+=energia_recuperada
         else:
@@ -59,9 +61,46 @@ class Personaje(Entidad):
             self.inventario.append(objeto)
         else:
             pass#falta indicacion si hay mas de 10 objeto
-    def eliminar_objeto(self):
-        pass#falta eliminacion de objeto
+    def eliminar_objeto(self,objeto):
+        if objeto in self.inventario:
+            self.inventario.remove(objeto)
+        else:
+            pass #falta indica que el objeto no esta en el inventario
+    def tomar_pocion(self,pocion):
+        if pocion in self.inventario and type(pocion)== Pocion:
+            if pocion.tipo =='salud':
+                if pocion.nivel ==1:
+                    self.salud+=self.salud_maxima*0.2
+                    if self.salud_maxima < self.salud:
+                        self.salud = self.salud_maxima
+                elif pocion.nivel == 2:
+                    self.salud+=self.salud_maxima*0.35
+                    if self.salud_maxima < self.salud:
+                        self.salud = self.salud_maxima
+                elif pocion.nivel == 3:
+                    self.salud+=self.salud_maxima*0.5
+                    if self.salud_maxima < self.salud:
+                        self.salud = self.salud_maxima
+                
+            elif pocion.tipo == 'enegia':
+                if pocion.nivel ==1:
+                    self.energia+=self.energia_maxima*0.2
+                    if self.energia_maxima < self.energia:
+                        self.energia = self.energia_maxima
+                elif pocion.nivel == 2:
+                    self.energia+=self.energia_maxima*0.35
+                    if self.energia_maxima < self.energia:
+                        self.energia = self.energia_maxima
+                elif pocion.nivel == 3:
+                    self.energia+=self.energia_maxima*0.5
+                    if self.energia_maxima < self.energia:
+                        self.energia = self.energia_maxima
+            self.eliminar_objeto(pocion)
+        else:
+            pass #mensaje en caso de que no tenga la pocion
 
+
+      
 @dataclass
 class Enemigo(Entidad):
     experiencia: int
@@ -76,3 +115,7 @@ class Habilidad:
 class Objeto:
     nombre: str
     descripcion: str
+@dataclass
+class Pocion(Objeto):
+    tipo: str
+    nivel: int
